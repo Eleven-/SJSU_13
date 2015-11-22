@@ -9,6 +9,7 @@
 #include "mbed.h"
 #include "BLE.h"
 #include "UARTService.h"
+//#include "JonathanUARTSerializer.hpp"
 
 //MARK: BLE Related setups***************************************************************///
 //                                                                                       ///
@@ -66,13 +67,13 @@ static uint8_t array_for_read[21]    = {0};
 static uint8_t array_for_write[20]   = {0};
 
 WriteOnlyArrayGattCharacteristic <uint8_t,
-                                  sizeof(array_for_write)>
+sizeof(array_for_write)>
 writeCharacteristic(writeCharUUID, array_for_write);
 
 ReadOnlyArrayGattCharacteristic  <uint8_t,
-                                  sizeof(array_for_read)>
+sizeof(array_for_read)>
 readCharacteristic (readCharUUID, array_for_read,
-                   (GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY|GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ));
+                    (GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY|GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ));
 
 GattCharacteristic
 *characteristics[] = {&writeCharacteristic, &readCharacteristic};
@@ -113,7 +114,7 @@ customService(customServiceUUID,
 //                                                                                       ///
 //                                                                                       ///
 //***************************************************************************************///
-volatile bool sys_flag = true;
+
 int main(void)
 {
     ble.init();
@@ -129,10 +130,6 @@ int main(void)
     
     // infinite loop
     while (1) {
-        if (sys_flag == false) {
-            sys_flag = true;
-        }
-        
         volatile float *rate = &ledRefreshRate;
         myled = 1;
         wait(*rate);
@@ -170,7 +167,6 @@ void connectionCallback(const Gap::ConnectionCallbackParams_t *params)
 void writeCharCallback(const GattWriteCallbackParams *params) {
     const char * data = (char *) params->data;
     UART_in_out.puts(data);
-    printf("data = %s", data);
 }
 //******************************************************************************************
 //                                                                                       ///
@@ -180,12 +176,36 @@ void writeCharCallback(const GattWriteCallbackParams *params) {
 //                                                                                       ///
 //                                                                                       ///
 //MARK: UART Interruption & file transfer **************************************************
+//const uint8_t jpeg_size_id = 0xa0;
+//uint8_t jpeg_size[2] = {};
+//uint8_t jpeg_size_count = 0;
+bool getting_img_size = false;
+uint8_t jpeg_data[2] = {};
+uint8_t jpeg_count = 0;
 void interrupt_from_uart_detected() {
+    
     uint8_t byte = UART_in_out.getc();
+    
+    if (getting_img_size) {
+        jpeg_data[jpeg_count] = byte;
+        jpeg_count++;
+        if (jpeg_count == 2) {
+            jpeg_count = 0;
+            uint8_t payload[4] = {sizeof(jpeg_data), 0xa0, jpeg_data[0], jpeg_data[1]};
+            ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), payload, sizeof(payload));
+            getting_img_size = false;
+            return;
+        }
+        return;
+    }
+    
+    if (byte == 0xa0) {
+        getting_img_size = true;
+        return;
+    }
+    
     uint8_t payload[2] = {sizeof(byte), byte};
     ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), payload, sizeof(payload));
-//    j_uart.receiveByte(UART_in_out.getc());
-    sys_flag = false;
 }
 //************************************************************************************************
 
