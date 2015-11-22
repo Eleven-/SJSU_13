@@ -180,8 +180,15 @@ void writeCharCallback(const GattWriteCallbackParams *params) {
 //uint8_t jpeg_size[2] = {};
 //uint8_t jpeg_size_count = 0;
 bool getting_img_size = false;
+bool getting_img      = false;
 uint8_t jpeg_data[2] = {};
 uint8_t jpeg_count = 0;
+
+uint16_t image_size = 0;
+
+uint8_t image_data[20] = {};
+uint8_t image_data_count = 0;
+
 void interrupt_from_uart_detected() {
     
     uint8_t byte = UART_in_out.getc();
@@ -192,12 +199,35 @@ void interrupt_from_uart_detected() {
         if (jpeg_count == 2) {
             jpeg_count = 0;
             uint8_t payload[4] = {sizeof(jpeg_data), 0xa0, jpeg_data[0], jpeg_data[1]};
+            image_size = (jpeg_data[0] * 0x100) | jpeg_data[1];
             ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), payload, sizeof(payload));
             getting_img_size = false;
+            getting_img = true;
             return;
         }
         return;
     }
+    
+    if (getting_img) {
+        image_data[image_data_count] = byte;
+        image_data_count++;
+        if (image_data_count == 20) {
+            ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), image_data, sizeof(image_data));
+            image_data_count = 00;
+            if (image_size - 20 > 0) {
+                image_size -= 20;
+                return;
+            }
+            
+            image_size = 0;
+            image_data_count = 0;
+            getting_img = false;
+        }
+        
+        //        UART_in_out.putc(0xb0);
+    }
+    
+    
     
     if (byte == 0xa0) {
         getting_img_size = true;
