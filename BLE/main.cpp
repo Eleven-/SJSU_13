@@ -9,7 +9,6 @@
 #include "mbed.h"
 #include "BLE.h"
 #include "UARTService.h"
-//#include "JonathanUARTSerializer.hpp"
 
 //MARK: BLE Related setups***************************************************************///
 //                                                                                       ///
