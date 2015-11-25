@@ -11,7 +11,8 @@ import CoreBluetooth
 
 class CubeSatCommandCenter {
     var temp: NSMutableData = NSMutableData()
-    var delegate: CubeSatCommandCenterDelegate?
+    var cameraDelegate: CubeSatCommandCenterCameraDelegate?
+    var attitudeDelegate: CubeSatCommandCenterAttitudeDelegate?
     private var isGettingImg: Bool = false
     private var LPCIsBusy: Bool = false {
         didSet {
@@ -66,10 +67,21 @@ class CubeSatCommandCenter {
             }
             
             let bytes = payload.byte_array
+            
+            let commandByte = bytes[0]
             if bytes[0] == lastSendedCommand {
                 LPCIsBusy = false
             }
+            switch commandByte {
+            case AttitudeViewController.CmdGetAttitude:
+                var data = [bytes[1], bytes[2]].dataValue()
+                let attitudeValue = NSData(bytes: &data, length: 2).castToUInt16
+                self.attitudeDelegate?.didGetAttitude(self, attitude: attitudeValue)
+            default: writeCommand([commandByte])
+            }
         }
+        
+
     }
     
     private func serializeImgData(payload: NSData) {
@@ -83,7 +95,7 @@ class CubeSatCommandCenter {
                 if byte == 0xff && bytes[index + 1] == 0xd9 {
                     tmp.append(bytes[index + 1])
 //                    temp = tmp.dataValue().mutableCopy() as! NSMutableData
-                    self.delegate?.didRecivedWholeJPEGCamera(self, JPEGData: tmp.dataValue())
+                    self.cameraDelegate?.didRecivedWholeJPEGCamera(self, JPEGData: tmp.dataValue())
                     NSLog("Image recieved: data: %@", tmp.dataValue().description)
                     break
                 }
@@ -98,11 +110,16 @@ class CubeSatCommandCenter {
     func writeCommand(bytes: [UInt8]) {
         self.writeToCubeSat(bytes.dataValue())
     }
+    
     private func writeToCubeSat(data: NSData) {
         writeCharacteristic.service.peripheral.writeValue(data, forCharacteristic: writeCharacteristic, type: .WithResponse)
     }
 }
 
-protocol CubeSatCommandCenterDelegate {
+protocol CubeSatCommandCenterCameraDelegate {
     func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
+}
+
+protocol CubeSatCommandCenterAttitudeDelegate {
+    func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16)
 }

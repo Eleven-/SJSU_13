@@ -43,6 +43,13 @@ extension NSData {
         return int_value
     }
     
+    ///Cast data into UInt16 value according to its byte_array value
+    var castToUInt16: UInt16 {
+        var int_value: UInt16 = 0
+        self.getBytes(&int_value, length: sizeof(UInt16))
+        return int_value
+    }
+    
     ///Cast data into Double value according to its byte_array value
     var castToDouble: Double {
         var double_value: Double = 0

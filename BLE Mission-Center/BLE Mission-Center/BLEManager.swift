@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, CubeSatCommandCenterDelegate {
+class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, CubeSatCommandCenterCameraDelegate {
     static var defaultManager = BLEManager()
     private var centralManager: CBCentralManager!
     private var readCharacteristic: CBCharacteristic?
@@ -88,7 +88,7 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, Cube
         }
         if readCharacteristic != nil && writeCharacteristic != nil {
             commandCenter = CubeSatCommandCenter(readCharacteristic: readCharacteristic!, writeCharacteristic: writeCharacteristic!)
-            commandCenter?.delegate = self
+            commandCenter?.cameraDelegate = self
         }
     }
     
