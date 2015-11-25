@@ -64,8 +64,11 @@
                                 <rect key="frame" x="387" y="206" width="82" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Set Attitude"/>
+                                <connections>
+                                    <action selector="sendSetAttitude:" destination="V9v-wg-Oy2" eventType="touchUpInside" id="cjE-Pc-Znc"/>
+                                </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="180degField" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pko-Sq-vVo">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="0 to 360" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pko-Sq-vVo">
                                 <rect key="frame" x="250" y="210" width="101" height="30"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>

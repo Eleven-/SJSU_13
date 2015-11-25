@@ -11,8 +11,8 @@ import CoreBluetooth
 
 class AttitudeViewController: UIViewController, CubeSatCommandCenterAttitudeDelegate {
     
-    static let CmdSetAttitude: UInt8  = 0x41
-    static let CmdGetAttitude: UInt8  = 0x42
+    static let CmdSetAttitude: UInt8  = 0x42
+    static let CmdGetAttitude: UInt8  = 0x41
     
     @IBOutlet weak var SetAttitudeLabel: UILabel!
     @IBOutlet weak var GetAttitudeLabel: UILabel!
@@ -54,26 +54,40 @@ class AttitudeViewController: UIViewController, CubeSatCommandCenterAttitudeDele
     */
     // Push button sendGetAttitude cmd 0x42
     @IBAction func getAttitude(sender: UIButton) {
-        BLEManager.defaultManager.commandCenter?.writeCommand([AttitudeViewController.CmdSetAttitude])
+        BLEManager.defaultManager.commandCenter?.writeCommand([AttitudeViewController.CmdGetAttitude])
         
-        // self.GetDegreesLabel.text =String(self.Score);
+        NSLog("getAttitude button %X", AttitudeViewController.CmdGetAttitude)
         
     }
     
     //Push button sendSetAttitude cmd 0x41 and 2 chars =  uint16_6
     @IBAction func sendSetAttitude(sender: UIButton) {
-        var value = self.SetDegreesField.text
+        
+        
+        let value = self.SetDegreesField.text
+        // convert input SetDegrees Field to Uint16
         var intValue = UInt16(value!)
+        
+        // Convert Uint16 into Uint8 array
         var array = NSData(bytes: &intValue, length: sizeofValue(intValue)).byte_array
+        
+        //Add the cmdSetAttitude at beginning of array
         array.insert(AttitudeViewController.CmdSetAttitude, atIndex: 0)
+        
+        // Send following data to Bluetooth
+        // [cmd, AttitudeDegrees_byte1, AttitudeDegrees_byte2]
         BLEManager.defaultManager.commandCenter?.writeCommand(array)
-        NSLog("Arary = \(array)")
+        
+        //print Array
+        NSLog("setAttitude button %X", AttitudeViewController.CmdSetAttitude)
+        NSLog("Array = \(array)")
         
     }
     
-    //Update
+    // When Attitude degress is received, update the Label with degrees
     func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16) {
         
+        self.GetDegreesLabel.text = String(att)
     }
     
 

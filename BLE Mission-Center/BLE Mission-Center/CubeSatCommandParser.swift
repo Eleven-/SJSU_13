@@ -25,7 +25,7 @@ class CubeSatCommandCenter {
     private var peripheral: CBPeripheral
     private let readJPEGCommand: NSData     = [UInt8(ReadCurrentJPEGFileContent)].dataValue()
     private let resetCameraCommand: NSData  = [UInt8(RESET)].dataValue()
-    private var lastSendedCommand: UInt8!
+    private var lastSendedCommand: UInt8?
     
     private var commandsToSent = [NSData]()
     
@@ -40,7 +40,7 @@ class CubeSatCommandCenter {
         if !LPCIsBusy {
             writeCharacteristic.service.peripheral.writeValue(readJPEGCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
             lastSendedCommand = UInt8(ReadCurrentJPEGFileContent)
-            NSLog("request 4 img, lastSendedCommand %i", lastSendedCommand)
+            NSLog("request 4 img, lastSendedCommand %i", lastSendedCommand!)
             LPCIsBusy = true
         }
 //        writeCharacteristic.service.peripheral.writeValue(readJPEGCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
@@ -53,7 +53,7 @@ class CubeSatCommandCenter {
 //            writeCharacteristic.service.peripheral.writeValue(resetCameraCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
             writeToCubeSat(resetCameraCommand)
             lastSendedCommand = UInt8(RESET)
-            NSLog("resetCamera, lastSendedCommand %i", lastSendedCommand)
+            NSLog("resetCamera, lastSendedCommand %i", lastSendedCommand!)
             LPCIsBusy = true
         }
     }
@@ -69,12 +69,20 @@ class CubeSatCommandCenter {
             let bytes = payload.byte_array
             
             let commandByte = bytes[0]
-            if bytes[0] == lastSendedCommand {
-                LPCIsBusy = false
+            if lastSendedCommand != nil {
+                if bytes[0] == lastSendedCommand  {
+                    LPCIsBusy = false
+                }
             }
             switch commandByte {
+            
+            // If cmd = CmdGetAttitude
             case AttitudeViewController.CmdGetAttitude:
+                
+                // convert next 2 bytes/char of data to variable
                 var data = [bytes[1], bytes[2]].dataValue()
+                
+                // convert the 2 bytes of data to UInt16
                 let attitudeValue = NSData(bytes: &data, length: 2).castToUInt16
                 self.attitudeDelegate?.didGetAttitude(self, attitude: attitudeValue)
             default: writeCommand([commandByte])
