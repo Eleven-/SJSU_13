@@ -9,7 +9,6 @@
 #include "mbed.h"
 #include "BLE.h"
 #include "UARTService.h"
-//#include "JonathanUARTSerializer.hpp"
 
 //MARK: BLE Related setups***************************************************************///
 //                                                                                       ///
@@ -34,10 +33,9 @@ DigitalOut myled(LED1);
 //                                                                                       ///
 //                                                                                       ///
 //Serial*********************************************************************************///
-Serial UART_in_out (P0_9, P0_11);
-//JonathanUARTSerializer j_uart = JonathanUARTSerializer(&UART_in_out);
-void interrupt_from_uart_detected();
 
+Serial UART_in_out (P0_9, P0_11);
+void interrupt_from_uart_detected();
 
 //***************************************************************************************///
 //                                                                                       ///
@@ -63,17 +61,15 @@ volatile float ledRefreshRate = 1.0;
 //                                                                                       ///
 //                                                                                       ///
 //***************************************************************************************///
-static uint8_t array_for_read[21]    = {0};
+static uint8_t array_for_read[20]    = {0};
 static uint8_t array_for_write[20]   = {0};
 
-WriteOnlyArrayGattCharacteristic <uint8_t,
-sizeof(array_for_write)>
+WriteOnlyArrayGattCharacteristic <uint8_t, sizeof(array_for_write)>
 writeCharacteristic(writeCharUUID, array_for_write);
 
-ReadOnlyArrayGattCharacteristic  <uint8_t,
-sizeof(array_for_read)>
-readCharacteristic (readCharUUID, array_for_read,
-                    (GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY|GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ));
+ReadOnlyArrayGattCharacteristic  <uint8_t, sizeof(array_for_read)>
+readCharacteristic  (readCharUUID, array_for_read,
+                     (GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY|GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ));
 
 GattCharacteristic
 *characteristics[] = {&writeCharacteristic, &readCharacteristic};
@@ -100,11 +96,7 @@ customService(customServiceUUID,
 //                                                                                       ///
 //                                                                                       ///
 //***************************************************************************************///
-//void didFinishProcessingData(JonathanUARTDidRecivedData_param_t *param)
-//{
-//    ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), param->bytes, sizeof(param->bytes));
-//}
-//
+
 
 //MARK: Main loop ***********************************************************************///
 //                                                                                       ///
@@ -168,6 +160,7 @@ void writeCharCallback(const GattWriteCallbackParams *params) {
     const char * data = (char *) params->data;
     UART_in_out.puts(data);
 }
+
 //******************************************************************************************
 //                                                                                       ///
 //                                                                                       ///
@@ -176,66 +169,20 @@ void writeCharCallback(const GattWriteCallbackParams *params) {
 //                                                                                       ///
 //                                                                                       ///
 //MARK: UART Interruption & file transfer **************************************************
-//const uint8_t jpeg_size_id = 0xa0;
-//uint8_t jpeg_size[2] = {};
-//uint8_t jpeg_size_count = 0;
-bool getting_img_size = false;
-bool getting_img      = false;
-uint8_t jpeg_data[2] = {};
-uint8_t jpeg_count = 0;
 
-uint16_t image_size = 0;
+uint8_t data[20] = {};
+uint8_t data_count = 0;
 
-uint8_t image_data[20] = {};
-uint8_t image_data_count = 0;
 
 void interrupt_from_uart_detected() {
-    
     uint8_t byte = UART_in_out.getc();
-    
-    if (getting_img_size) {
-        jpeg_data[jpeg_count] = byte;
-        jpeg_count++;
-        if (jpeg_count == 2) {
-            jpeg_count = 0;
-            uint8_t payload[4] = {sizeof(jpeg_data), 0xa0, jpeg_data[0], jpeg_data[1]};
-            image_size = (jpeg_data[0] * 0x100) | jpeg_data[1];
-            ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), payload, sizeof(payload));
-            getting_img_size = false;
-            getting_img = true;
-            return;
-        }
+    data[data_count] = byte;
+    data_count++;
+    if (data_count == 20) {
+        ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), data, sizeof(data));
+        data_count = 0; //reset counter
         return;
     }
-    
-    if (getting_img) {
-        image_data[image_data_count] = byte;
-        image_data_count++;
-        if (image_data_count == 20) {
-            ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), image_data, sizeof(image_data));
-            image_data_count = 00;
-            if (image_size - 20 > 0) {
-                image_size -= 20;
-                return;
-            }
-            
-            image_size = 0;
-            image_data_count = 0;
-            getting_img = false;
-        }
-        
-        //        UART_in_out.putc(0xb0);
-    }
-    
-    
-    
-    if (byte == 0xa0) {
-        getting_img_size = true;
-        return;
-    }
-    
-    uint8_t payload[2] = {sizeof(byte), byte};
-    ble.updateCharacteristicValue(readCharacteristic.getValueHandle(), payload, sizeof(payload));
 }
 //************************************************************************************************
 
