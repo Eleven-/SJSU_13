@@ -9,22 +9,28 @@
 import Foundation
 import CoreBluetooth
 
-class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, CubeSatCommandCenterDelegate {
     static var defaultManager = BLEManager()
     private var centralManager: CBCentralManager!
     private var readCharacteristic: CBCharacteristic?
     private var writeCharacteristic: CBCharacteristic?
+    private var peripheral: CBPeripheral?
+    var delegate: BLECenterDelegate?
+    
+    var commandCenter: CubeSatCommandCenter?
     
     func initalizeManager() {
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        centralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue(), options: nil)
     }
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
+//        BLELog("Found Peripheral with UUID: %@, withName: \(peripheral.name)", peripheral.identifier.UUIDString)
         if let peripheralName = peripheral.name {
-            if peripheralName.hasPrefix("cubSat") {
+            if peripheralName.hasPrefix("CubeSat") {
                 BLELog("Discovered peripheral with name %@", peripheralName)
-                central.connectPeripheral(peripheral, options: nil)
-                BLELog("Attempting connect to peripheral with [named: %@, UUID: %@]", peripheral.name!, peripheral.identifier.UUIDString)
+                self.peripheral = peripheral
+                central.connectPeripheral(self.peripheral!, options: nil)
+                BLELog("Attempting to connect peripheral[named: %@, UUID: %@]", peripheral.name!, peripheral.identifier.UUIDString)
             }
         }
     }
@@ -70,19 +76,26 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         }
     }
     
+    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
+        BLELog("JPEG received: %@", JPEGData.description)
+        self.delegate?.didRecivedWholeJPEGCamera(parser, JPEGData: JPEGData)
+    }
+    
     func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         BLELog("Notification State of characteristic[UUID: %@] is updated", characteristic.UUID.UUIDString)
         if let err = error {
             BLELog("Error Occurs: %@", err)
+        }
+        if readCharacteristic != nil && writeCharacteristic != nil {
+            commandCenter = CubeSatCommandCenter(readCharacteristic: readCharacteristic!, writeCharacteristic: writeCharacteristic!)
+            commandCenter?.delegate = self
         }
     }
     
     func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         BLELog("Value of characteristic[UUID: %@] updated, newValue: %@", characteristic.UUID.UUIDString, characteristic.value!)
         if characteristic == readCharacteristic {
-            let payload         = characteristic.value!.byte_array
-            let payload_size    = payload[0]
-            
+            commandCenter?.parseData(readCharacteristic?.value)
         }
     }
     
@@ -110,3 +123,8 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
 private func BLELog(format: String, _ args: CVarArgType...) {
     NSLogv("BLEManager: \(format)", getVaList(args))
 }
+
+protocol BLECenterDelegate {
+    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
+}
+

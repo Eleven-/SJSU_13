@@ -11,6 +11,7 @@
 		CE5362B11C028F8C005DDFBF /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5362B01C028F8C005DDFBF /* BLEManager.swift */; };
 		CE5362CB1C02A71E005DDFBF /* helper_methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5362CA1C02A71E005DDFBF /* helper_methods.swift */; };
 		CE5362CD1C02A769005DDFBF /* NSDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5362CC1C02A769005DDFBF /* NSDataHelper.swift */; };
+		CE9E6FE11C04478C0033E7CB /* CubeSatCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9E6FE01C04478C0033E7CB /* CubeSatCommandParser.swift */; };
 		CEA268B21BC31CEE00B22C8D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA268B11BC31CEE00B22C8D /* AppDelegate.swift */; };
 		CEA268B41BC31CEE00B22C8D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA268B31BC31CEE00B22C8D /* ViewController.swift */; };
 		CEA268B71BC31CEE00B22C8D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEA268B51BC31CEE00B22C8D /* Main.storyboard */; };
@@ -42,9 +43,10 @@
 		CE5362AD1C028E90005DDFBF /* CameraControlViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControlViewController.swift; sourceTree = "<group>"; };
 		CE5362B01C028F8C005DDFBF /* BLEManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
 		CE5362B31C0299A4005DDFBF /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
-		CE5362C81C02A08F005DDFBF /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helpers.h; path = ../../../../Documents/GitHub/SJSU_13/BLE/helpers.h; sourceTree = "<group>"; };
 		CE5362CA1C02A71E005DDFBF /* helper_methods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = helper_methods.swift; sourceTree = "<group>"; };
 		CE5362CC1C02A769005DDFBF /* NSDataHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataHelper.swift; sourceTree = "<group>"; };
+		CE9E6FE01C04478C0033E7CB /* CubeSatCommandParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CubeSatCommandParser.swift; sourceTree = "<group>"; };
+		CE9E6FE31C0465610033E7CB /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		CEA268AE1BC31CEE00B22C8D /* BLE Mission-Center.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BLE Mission-Center.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEA268B11BC31CEE00B22C8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CEA268B31BC31CEE00B22C8D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		CEA268A51BC31CEE00B22C8D = {
 			isa = PBXGroup;
 			children = (
+				CE9E6FE31C0465610033E7CB /* MyPlayground.playground */,
 				CEA268B01BC31CEE00B22C8D /* BLE Mission-Center */,
 				CEA268C81BC31CEE00B22C8D /* BLE Mission-CenterTests */,
 				CEA268D31BC31CEE00B22C8D /* BLE Mission-CenterUITests */,
@@ -131,9 +134,9 @@
 				CEEA27561BE9C04F0092DADF /* BLE Mission-Center-Bridging-Header.h */,
 				CE5362AD1C028E90005DDFBF /* CameraControlViewController.swift */,
 				CE5362B01C028F8C005DDFBF /* BLEManager.swift */,
-				CE5362C81C02A08F005DDFBF /* helpers.h */,
 				CE5362CC1C02A769005DDFBF /* NSDataHelper.swift */,
 				CE5362CA1C02A71E005DDFBF /* helper_methods.swift */,
+				CE9E6FE01C04478C0033E7CB /* CubeSatCommandParser.swift */,
 			);
 			path = "BLE Mission-Center";
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE9E6FE11C04478C0033E7CB /* CubeSatCommandParser.swift in Sources */,
 				CE5362CB1C02A71E005DDFBF /* helper_methods.swift in Sources */,
 				CEA268B41BC31CEE00B22C8D /* ViewController.swift in Sources */,
 				CEA268BA1BC31CEE00B22C8D /* BLE_Mission_Center.xcdatamodeld in Sources */,

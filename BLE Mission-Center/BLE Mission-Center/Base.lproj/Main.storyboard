@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15C47a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15C47a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="dWR-Za-9Ps">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
     </dependencies>
@@ -55,6 +55,9 @@
                                 <rect key="frame" x="110" y="397" width="100" height="100"/>
                                 <animations/>
                                 <state key="normal" title="Take Picture"/>
+                                <connections>
+                                    <action selector="takePicture:" destination="NqA-rq-7ji" eventType="touchUpInside" id="foL-g4-cX8"/>
+                                </connections>
                             </button>
                             <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="zIu-l0-DBC">
                                 <rect key="frame" x="206" y="322" width="94" height="29"/>
@@ -71,6 +74,9 @@
                                 <rect key="frame" x="107" y="248" width="107" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Reset"/>
+                                <connections>
+                                    <action selector="reset:" destination="NqA-rq-7ji" eventType="touchUpInside" id="us7-Qc-TUa"/>
+                                </connections>
                             </button>
                         </subviews>
                         <animations/>
@@ -89,7 +95,7 @@
         <!--Propulsion-->
         <scene sceneID="CjT-ko-yAS">
             <objects>
-                <viewController id="RgO-Ae-Oyo" sceneMemberID="viewController">
+                <viewController id="RgO-Ae-Oyo" customClass="ViewController" customModule="BLE_Mission_Center" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5Y5-pT-JBJ"/>
                         <viewControllerLayoutGuide type="bottom" id="GD3-Tj-gAY"/>
@@ -97,10 +103,19 @@
                     <view key="view" contentMode="scaleToFill" id="sif-ua-Dpe">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2qh-qb-RdS">
+                                <rect key="frame" x="30" y="40" width="240" height="128"/>
+                                <animations/>
+                            </imageView>
+                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Propulsion" id="Y10-nE-31v"/>
+                    <connections>
+                        <outlet property="image" destination="2qh-qb-RdS" id="pdo-cr-lhb"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lR-E3-AVW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

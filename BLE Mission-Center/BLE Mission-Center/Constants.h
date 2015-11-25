@@ -12,7 +12,7 @@
  *  
  *
  */
-#define ReadCharacteristicUUID @""
-#define WriteCharacteristicUUID @""
+#define ReadCharacteristicUUID @"A001"
+#define WriteCharacteristicUUID @"A002"
 
 #endif /* Constants_h */
