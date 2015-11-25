@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2654D2A81C056927000F2216 /* Att.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2654D2A71C056927000F2216 /* Att.storyboard */; };
+		2654D2AA1C05695D000F2216 /* AttitudeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2654D2A91C05695D000F2216 /* AttitudeViewController.swift */; };
 		CE5362AE1C028E90005DDFBF /* CameraControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5362AD1C028E90005DDFBF /* CameraControlViewController.swift */; };
 		CE5362B11C028F8C005DDFBF /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5362B01C028F8C005DDFBF /* BLEManager.swift */; };
 		CE5362CB1C02A71E005DDFBF /* helper_methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5362CA1C02A71E005DDFBF /* helper_methods.swift */; };
@@ -40,6 +42,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2654D2A71C056927000F2216 /* Att.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Att.storyboard; sourceTree = "<group>"; };
+		2654D2A91C05695D000F2216 /* AttitudeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttitudeViewController.swift; sourceTree = "<group>"; };
 		CE5362AD1C028E90005DDFBF /* CameraControlViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControlViewController.swift; sourceTree = "<group>"; };
 		CE5362B01C028F8C005DDFBF /* BLEManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
 		CE5362B31C0299A4005DDFBF /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
@@ -130,6 +134,8 @@
 				CEA268B11BC31CEE00B22C8D /* AppDelegate.swift */,
 				CEA268B31BC31CEE00B22C8D /* ViewController.swift */,
 				CEEA27581BE9C04F0092DADF /* CubesatCommands.h */,
+				2654D2A91C05695D000F2216 /* AttitudeViewController.swift */,
+				2654D2A71C056927000F2216 /* Att.storyboard */,
 				CE5362B31C0299A4005DDFBF /* Constants.h */,
 				CEEA27561BE9C04F0092DADF /* BLE Mission-Center-Bridging-Header.h */,
 				CE5362AD1C028E90005DDFBF /* CameraControlViewController.swift */,
@@ -265,6 +271,7 @@
 			files = (
 				CEA268BF1BC31CEE00B22C8D /* LaunchScreen.storyboard in Resources */,
 				CEA268BC1BC31CEE00B22C8D /* Assets.xcassets in Resources */,
+				2654D2A81C056927000F2216 /* Att.storyboard in Resources */,
 				CEA268B71BC31CEE00B22C8D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,6 +300,7 @@
 				CE9E6FE11C04478C0033E7CB /* CubeSatCommandParser.swift in Sources */,
 				CE5362CB1C02A71E005DDFBF /* helper_methods.swift in Sources */,
 				CEA268B41BC31CEE00B22C8D /* ViewController.swift in Sources */,
+				2654D2AA1C05695D000F2216 /* AttitudeViewController.swift in Sources */,
 				CEA268BA1BC31CEE00B22C8D /* BLE_Mission_Center.xcdatamodeld in Sources */,
 				CE5362B11C028F8C005DDFBF /* BLEManager.swift in Sources */,
 				CE5362AE1C028E90005DDFBF /* CameraControlViewController.swift in Sources */,
