@@ -12,6 +12,7 @@
  *  
  *
  */
+#define CubeSatUUID @"D0918011-8867-AC79-A85F-59D04C026B82"
 #define ReadCharacteristicUUID @"A001"
 #define WriteCharacteristicUUID @"A002"
 

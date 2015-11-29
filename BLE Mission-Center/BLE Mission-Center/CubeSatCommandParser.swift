@@ -80,11 +80,15 @@ class CubeSatCommandCenter {
             case AttitudeViewController.CmdGetAttitude:
                 
                 // convert next 2 bytes/char of data to variable
-                var data = [bytes[1], bytes[2]].dataValue()
+                var data = [bytes[2], bytes[1]].dataValue()
                 
                 // convert the 2 bytes of data to UInt16
-                let attitudeValue = NSData(bytes: &data, length: 2).castToUInt16
+                let attitudeValue = data.castToUInt16
+                
+                print(attitudeValue)
+                
                 self.attitudeDelegate?.didGetAttitude(self, attitude: attitudeValue)
+                
             default: writeCommand([commandByte])
             }
         }
@@ -127,6 +131,7 @@ class CubeSatCommandCenter {
 protocol CubeSatCommandCenterCameraDelegate {
     func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
 }
+
 
 protocol CubeSatCommandCenterAttitudeDelegate {
     func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16)

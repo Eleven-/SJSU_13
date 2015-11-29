@@ -9,13 +9,14 @@
 import UIKit
 import CoreBluetooth
 
-class AttitudeViewController: UIViewController, CubeSatCommandCenterAttitudeDelegate {
+class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatCommandCenterAttitudeDelegate {
     
-    static let CmdSetAttitude: UInt8  = 0x42
-    static let CmdGetAttitude: UInt8  = 0x41
+    static let CmdGetAttitude: UInt8  = 0x41  //decimal 65
+    static let CmdSetAttitude: UInt8  = 0x42  //decimal 66
+    static let CmdPowerOffAttitude: UInt8  = 0x43  //decimal 67
     
     @IBOutlet weak var SetAttitudeLabel: UILabel!
-    @IBOutlet weak var GetAttitudeLabel: UILabel!
+    //@IBOutlet weak var GetAttitudeLabel: UILabel!
     
     @IBOutlet weak var SetDegreesField: UITextField!
     @IBOutlet weak var GetDegreesLabel: UILabel!
@@ -24,17 +25,34 @@ class AttitudeViewController: UIViewController, CubeSatCommandCenterAttitudeDele
     @IBOutlet weak var SetAttitudeButton: UIButton!
     @IBOutlet weak var GetAttitudeButton: UIButton!
     
-    @IBOutlet weak var AttitudeActivityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var AttitudeIndicatorLabel: UILabel!
+    @IBOutlet weak var PowerOffAttButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        BLEManager.defaultManager.commandCenter?.attitudeDelegate = self
+        // Do any additional setup after loading the view
+    
         
-        // Do any additional setup after loading the view.
-        // self.SetAttitudeButton.setTitle("Get Attitude", forState: UIControlState.Normal)
-        //BLEManager.defaultManager.initalizeManager()
+        //Increase Font size
+        GetDegreesLabel.font = UIFont.systemFontOfSize(80)
+        SetAttitudeLabel.font = UIFont.systemFontOfSize(25)
         
+        SetDegreesField.font = UIFont.systemFontOfSize(25)
         
+        // viewcontroller is text field delegate for closing keyboard
+        self.SetDegreesField.delegate = self
+        
+        SetAttitudeButton.layer.cornerRadius = 5;
+        SetAttitudeButton.layer.borderWidth = 1;
+        SetAttitudeButton.layer.borderColor = UIColor.blueColor().CGColor
+        
+        GetAttitudeButton.layer.cornerRadius = 5;
+        GetAttitudeButton.layer.borderWidth = 1;
+        GetAttitudeButton.layer.borderColor = UIColor.blueColor().CGColor
+        
+        PowerOffAttButton.layer.cornerRadius = 5;
+        PowerOffAttButton.layer.borderWidth = 1;
+        PowerOffAttButton.layer.borderColor = UIColor.blueColor().CGColor
     }
     
     override func didReceiveMemoryWarning() {
@@ -56,6 +74,8 @@ class AttitudeViewController: UIViewController, CubeSatCommandCenterAttitudeDele
     @IBAction func getAttitude(sender: UIButton) {
         BLEManager.defaultManager.commandCenter?.writeCommand([AttitudeViewController.CmdGetAttitude])
         
+        //AttitudeActivityIndicator.startAnimating()
+        
         NSLog("getAttitude button %X", AttitudeViewController.CmdGetAttitude)
         
     }
@@ -65,30 +85,56 @@ class AttitudeViewController: UIViewController, CubeSatCommandCenterAttitudeDele
         
         
         let value = self.SetDegreesField.text
+        
         // convert input SetDegrees Field to Uint16
         var intValue = UInt16(value!)
         
-        // Convert Uint16 into Uint8 array
+        print(intValue)
+    
+        // Convert Uint16 into Uint8 array - note 3 bytes
         var array = NSData(bytes: &intValue, length: sizeofValue(intValue)).byte_array
+        NSLog("Set Attitude Degrees Array = \(array)")
         
         //Add the cmdSetAttitude at beginning of array
         array.insert(AttitudeViewController.CmdSetAttitude, atIndex: 0)
+        
+        // remove empty last byte
+        array.removeLast()
+        if array[2] == 0x00 {
+            array[2] = 0xff
+        }
         
         // Send following data to Bluetooth
         // [cmd, AttitudeDegrees_byte1, AttitudeDegrees_byte2]
         BLEManager.defaultManager.commandCenter?.writeCommand(array)
         
-        //print Array
+        //print Array - decimal
         NSLog("setAttitude button %X", AttitudeViewController.CmdSetAttitude)
-        NSLog("Array = \(array)")
+        NSLog("Sent Array = \(array)")
         
     }
     
     // When Attitude degress is received, update the Label with degrees
     func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16) {
         
-        self.GetDegreesLabel.text = String(att)
+        NSLog("didGetAttitude %x", att)
+        
+        var degrees = "°"
+        degrees += String(att)
+        
+        self.GetDegreesLabel.text = degrees
+        
     }
-    
+   
+    // closes the keyboard when pressing return on textfield or outside textfield
+    func textFieldShouldReturn(userText: UITextField!) -> Bool {
+        userText.resignFirstResponder()
+        return true;
+    }
 
+    @IBAction func powerOffAtt(sender: UIButton) {
+        BLEManager.defaultManager.commandCenter?.writeCommand([AttitudeViewController.CmdPowerOffAttitude])
+        
+        NSLog("powerOffAttitude button %X", AttitudeViewController.CmdPowerOffAttitude)
+    }
 }

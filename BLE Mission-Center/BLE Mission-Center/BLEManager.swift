@@ -26,7 +26,7 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, Cube
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
 //        BLELog("Found Peripheral with UUID: %@, withName: \(peripheral.name)", peripheral.identifier.UUIDString)
         if let peripheralName = peripheral.name {
-            if peripheralName.hasPrefix("CubeSat") {
+            if peripheral.identifier.UUIDString == CubeSatUUID {
                 BLELog("Discovered peripheral with name %@", peripheralName)
                 self.peripheral = peripheral
                 central.connectPeripheral(self.peripheral!, options: nil)
