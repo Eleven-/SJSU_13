@@ -11,9 +11,10 @@ import CoreBluetooth
 
 class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatCommandCenterAttitudeDelegate {
     
-    static let CmdGetAttitude: UInt8  = 0x41  //decimal 65
-    static let CmdSetAttitude: UInt8  = 0x42  //decimal 66
-    static let CmdPowerOffAttitude: UInt8  = 0x43  //decimal 67
+    static let CmdGetAttitude: UInt8  = 0x41        //decimal 65
+    static let CmdSetAttitude: UInt8  = 0x42        //decimal 66
+    static let CmdPowerOffAttitude: UInt8  = 0x43   //decimal 67
+    static let CmdSunPointerAttitude: UInt8  = 0x44 //decimal 68
     
     @IBOutlet weak var SetAttitudeLabel: UILabel!
     //@IBOutlet weak var GetAttitudeLabel: UILabel!
@@ -21,11 +22,10 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
     @IBOutlet weak var SetDegreesField: UITextField!
     @IBOutlet weak var GetDegreesLabel: UILabel!
     
-    
     @IBOutlet weak var SetAttitudeButton: UIButton!
     @IBOutlet weak var GetAttitudeButton: UIButton!
-    
     @IBOutlet weak var PowerOffAttButton: UIButton!
+    @IBOutlet weak var SunPointerButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +53,12 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
         PowerOffAttButton.layer.cornerRadius = 5;
         PowerOffAttButton.layer.borderWidth = 1;
         PowerOffAttButton.layer.borderColor = UIColor.blueColor().CGColor
+   
+        SunPointerButton.layer.cornerRadius = 5;
+        SunPointerButton.layer.borderWidth = 1;
+        SunPointerButton.layer.borderColor = UIColor.blueColor().CGColor
+
+    
     }
     
     override func didReceiveMemoryWarning() {
@@ -119,8 +125,8 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
         
         NSLog("didGetAttitude %x", att)
         
-        var degrees = "°"
-        degrees += String(att)
+        var degrees = String(att)
+        //degrees += "°"
         
         self.GetDegreesLabel.text = degrees
         
@@ -137,4 +143,14 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
         
         NSLog("powerOffAttitude button %X", AttitudeViewController.CmdPowerOffAttitude)
     }
+    
+    
+    @IBAction func sunPointerAtt(sender: UIButton) {
+        
+        BLEManager.defaultManager.commandCenter?.writeCommand([AttitudeViewController.CmdSunPointerAttitude])
+        
+        NSLog("sunPointerAttitude button %X", AttitudeViewController.CmdSunPointerAttitude)
+        
+    }
+    
 }

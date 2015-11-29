@@ -80,11 +80,20 @@
                                     <action selector="powerOffAtt:" destination="V9v-wg-Oy2" eventType="touchUpInside" id="QGl-3l-ZGD"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HAW-vz-Yak">
+                                <rect key="frame" x="253" y="426" width="95" height="30"/>
+                                <animations/>
+                                <state key="normal" title="  Sun Pointer  "/>
+                                <connections>
+                                    <action selector="sunPointerAtt:" destination="V9v-wg-Oy2" eventType="touchUpInside" id="gAv-Cc-4oA"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="pko-Sq-vVo" firstAttribute="centerX" secondItem="8Tp-cx-Dol" secondAttribute="centerX" id="48n-SG-L3g"/>
+                            <constraint firstItem="HAW-vz-Yak" firstAttribute="centerX" secondItem="8Tp-cx-Dol" secondAttribute="centerX" id="4JJ-E1-IBj"/>
                             <constraint firstItem="D9Z-op-Naz" firstAttribute="centerY" secondItem="8Tp-cx-Dol" secondAttribute="centerY" id="7AF-wW-iwI"/>
                             <constraint firstItem="pko-Sq-vVo" firstAttribute="top" secondItem="j6B-wY-dlp" secondAttribute="bottom" constant="50" id="Cil-D1-asl"/>
                             <constraint firstItem="pko-Sq-vVo" firstAttribute="centerY" secondItem="8Tp-cx-Dol" secondAttribute="centerY" id="DC7-W1-YUN"/>
@@ -103,6 +112,7 @@
                             <constraint firstItem="TjV-g8-qDp" firstAttribute="centerX" secondItem="8Tp-cx-Dol" secondAttribute="centerX" id="kca-jd-kZW"/>
                             <constraint firstItem="TjV-g8-qDp" firstAttribute="centerX" secondItem="8Tp-cx-Dol" secondAttribute="centerX" id="mQU-PD-Zp5"/>
                             <constraint firstItem="j6B-wY-dlp" firstAttribute="top" secondItem="TjV-g8-qDp" secondAttribute="bottom" constant="25" id="nKE-TH-bJp"/>
+                            <constraint firstItem="HAW-vz-Yak" firstAttribute="top" secondItem="39R-Qf-BdO" secondAttribute="bottom" constant="20" id="niW-8D-YPF"/>
                             <constraint firstItem="pko-Sq-vVo" firstAttribute="centerX" secondItem="8Tp-cx-Dol" secondAttribute="centerX" constant="75" id="szb-bN-QKM"/>
                             <constraint firstItem="39R-Qf-BdO" firstAttribute="top" secondItem="y82-I1-Ppr" secondAttribute="bottom" constant="20" id="tfi-cc-Hyb"/>
                         </constraints>
@@ -129,6 +139,7 @@
                         <outlet property="SetAttitudeButton" destination="y82-I1-Ppr" id="HF3-96-OBe"/>
                         <outlet property="SetAttitudeLabel" destination="D9Z-op-Naz" id="Nkf-ek-GrE"/>
                         <outlet property="SetDegreesField" destination="pko-Sq-vVo" id="iB3-sr-CkH"/>
+                        <outlet property="SunPointerButton" destination="HAW-vz-Yak" id="mUd-Mm-9Po"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4vu-fa-hcs" userLabel="First Responder" sceneMemberID="firstResponder"/>
