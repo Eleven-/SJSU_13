@@ -45,6 +45,26 @@ class CameraControlViewController: UIViewController, BLECenterDelegate {
         BLEManager.defaultManager.commandCenter?.setCompressionRation(ratio)
     }
     
+    @IBAction func enterPowerSaving(sender: UISwitch) {
+        BLEManager.defaultManager.commandCenter?.enterPowerSaving(sender.on)
+    }
+    
+    @IBAction func setResulotion(sender: UISegmentedControl) {
+        var resolusion: Resolution!
+        switch sender.selectedSegmentIndex {
+        case 0:
+            resolusion = Resolution._160x120
+        case 1:
+            resolusion = Resolution._320x240
+        case 2:
+            resolusion = Resolution._640x480
+        default: break
+        }
+        BLEManager.defaultManager.commandCenter?.setResolution(resolusion)
+    }
+    
+    
+    
     @IBAction func takePicture(sender: AnyObject) {
         BLEManager.defaultManager.commandCenter?.requestForImage()
     }

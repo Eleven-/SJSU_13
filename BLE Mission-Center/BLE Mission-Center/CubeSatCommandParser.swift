@@ -14,24 +14,26 @@ class CubeSatCommandCenter {
     var cameraDelegate: CubeSatCommandCenterCameraDelegate?
     var attitudeDelegate: CubeSatCommandCenterAttitudeDelegate?
     private var isGettingImg: Bool = false
-    private var LPCIsBusy: Bool = false {
-        didSet {
-            NSLog("LPC status : %@", LPCIsBusy ? "Busy" : "IDLE")
-        }
-    }
-    
     private var readCharacteristic: CBCharacteristic
     private var writeCharacteristic: CBCharacteristic
     private var peripheral: CBPeripheral
-    private let readJPEGCommand: NSData     = [UInt8(ReadCurrentJPEGFileContent)].dataValue()
-    private let resetCameraCommand: NSData  = [UInt8(RESET)].dataValue()
     private var lastSendedCommand: UInt8? {
         didSet {
             CmdLog("Last Command: 0x%x", lastSendedCommand!)
         }
     }
     
+    private var LPCIsBusy: Bool = false {
+        didSet {
+            NSLog("LPC status : %@", LPCIsBusy ? "Busy" : "IDLE")
+        }
+    }
+    
     private var commandsToSent = [NSData]()
+    
+    private let readJPEGCommand: NSData     = [UInt8(ReadCurrentJPEGFileContent)].dataValue()
+    private let resetCameraCommand: NSData  = [UInt8(RESET)].dataValue()
+    
     
     init(readCharacteristic: CBCharacteristic, writeCharacteristic: CBCharacteristic) {
         self.readCharacteristic     = readCharacteristic
@@ -61,6 +63,19 @@ class CubeSatCommandCenter {
     func setCompressionRation(ratio: compressRatio) {
         lastSendedCommand = ratio.rawValue
         writeCommand([ratio.rawValue])
+        LPCIsBusy = true
+    }
+    
+    func setResolution(resolution: Resolution) {
+        lastSendedCommand = resolution.rawValue
+        writeCommand([resolution.rawValue])
+        LPCIsBusy = true
+    }
+    
+    func enterPowerSaving(enterPowerSaving: Bool) {
+        let command: UInt8 = enterPowerSaving ? 0b11100000 : 0b11110000
+        lastSendedCommand = command
+        writeCommand([command])
         LPCIsBusy = true
     }
 
@@ -146,6 +161,12 @@ enum compressRatio: UInt8 {
     case _25_percent    = 0b11000010
     case _50_percent    = 0b11000100
     case _75_percent    = 0b11001000
+}
+
+enum Resolution: UInt8 {
+    case _320x240   = 0b11010000
+    case _640x480   = 0b11010001
+    case _160x120   = 0b11010010
 }
 
 protocol CubeSatCommandCenterCameraDelegate {
