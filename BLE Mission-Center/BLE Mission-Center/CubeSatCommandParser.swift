@@ -25,7 +25,11 @@ class CubeSatCommandCenter {
     private var peripheral: CBPeripheral
     private let readJPEGCommand: NSData     = [UInt8(ReadCurrentJPEGFileContent)].dataValue()
     private let resetCameraCommand: NSData  = [UInt8(RESET)].dataValue()
-    private var lastSendedCommand: UInt8?
+    private var lastSendedCommand: UInt8? {
+        didSet {
+            CmdLog("Last Command: 0x%x", lastSendedCommand!)
+        }
+    }
     
     private var commandsToSent = [NSData]()
     
@@ -40,24 +44,26 @@ class CubeSatCommandCenter {
         if !LPCIsBusy {
             writeCharacteristic.service.peripheral.writeValue(readJPEGCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
             lastSendedCommand = UInt8(ReadCurrentJPEGFileContent)
-            NSLog("request 4 img, lastSendedCommand %i", lastSendedCommand!)
+            CmdLog("requesting for img")
             LPCIsBusy = true
         }
-//        writeCharacteristic.service.peripheral.writeValue(readJPEGCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
-//        lastSendedCommand = UInt8(ReadCurrentJPEGFileContent)
-//        LPCIsBusy = true
     }
     
     func resetCamera() {
         if !LPCIsBusy {
-//            writeCharacteristic.service.peripheral.writeValue(resetCameraCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
             writeToCubeSat(resetCameraCommand)
             lastSendedCommand = UInt8(RESET)
-            NSLog("resetCamera, lastSendedCommand %i", lastSendedCommand!)
+            CmdLog("reseting camera")
             LPCIsBusy = true
         }
     }
     
+    func setCompressionRation(ratio: compressRatio) {
+        lastSendedCommand = ratio.rawValue
+        writeCommand([ratio.rawValue])
+        LPCIsBusy = true
+    }
+
     func parseData(data: NSData?) {
         NSLog("received data: %@", (data?.description)!)
         if let payload = data {
@@ -75,21 +81,20 @@ class CubeSatCommandCenter {
                 }
             }
             switch commandByte {
-            
-            // If cmd = CmdGetAttitude
+            case UInt8(RESET): break
+                // If cmd = CmdGetAttitude
             case AttitudeViewController.CmdGetAttitude:
                 
                 // convert next 2 bytes/char of data to variable
-                var data = [bytes[2], bytes[1]].dataValue()
+                let data = [bytes[2], bytes[1]].dataValue()
                 
                 // convert the 2 bytes of data to UInt16
                 let attitudeValue = data.castToUInt16
                 
-                print(attitudeValue)
-                
                 self.attitudeDelegate?.didGetAttitude(self, attitude: attitudeValue)
-                
-            default: writeCommand([commandByte])
+            case AttitudeViewController.CmdSetAttitude:
+                writeCommand([commandByte])
+            default: break
             }
         }
         
@@ -98,6 +103,9 @@ class CubeSatCommandCenter {
     
     private func serializeImgData(payload: NSData) {
         temp.appendData(payload)
+        CmdLog("Received Image data with length %i", payload.length)
+        CmdLog("Total bytes stored in memory: %i", temp.length)
+        print(temp)
         if temp.description.stringByReplacingOccurrencesOfString(" ", withString: "").containsString("ffd9") {
             isGettingImg = false
             let bytes = temp.byte_array
@@ -106,13 +114,13 @@ class CubeSatCommandCenter {
                 tmp.append(byte)
                 if byte == 0xff && bytes[index + 1] == 0xd9 {
                     tmp.append(bytes[index + 1])
-//                    temp = tmp.dataValue().mutableCopy() as! NSMutableData
                     self.cameraDelegate?.didRecivedWholeJPEGCamera(self, JPEGData: tmp.dataValue())
-                    NSLog("Image recieved: data: %@", tmp.dataValue().description)
+                    CmdLog("Image recieved: data: %@", tmp.dataValue().description)
                     break
                 }
             }
-            writeToCubeSat([lastSendedCommand].dataValue())
+            writeToCubeSat([0xd0].dataValue())
+            lastSendedCommand = 0xd0
         } else {
             LPCIsBusy = false
             requestForImage()
@@ -126,6 +134,18 @@ class CubeSatCommandCenter {
     private func writeToCubeSat(data: NSData) {
         writeCharacteristic.service.peripheral.writeValue(data, forCharacteristic: writeCharacteristic, type: .WithResponse)
     }
+}
+
+private func CmdLog(format: String, _ args: CVarArgType...) {
+    NSLogv("\nCubeSatCommandCenter: \(format)", getVaList(args))
+}
+
+enum compressRatio: UInt8 {
+    case zero           = 0b11000001
+    case _36_percent    = 0b11000000
+    case _25_percent    = 0b11000010
+    case _50_percent    = 0b11000100
+    case _75_percent    = 0b11001000
 }
 
 protocol CubeSatCommandCenterCameraDelegate {
