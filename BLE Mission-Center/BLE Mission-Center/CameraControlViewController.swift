@@ -10,12 +10,41 @@ import UIKit
 
 class CameraControlViewController: UIViewController, BLECenterDelegate {
 
+    @IBOutlet weak var compressionRatioStepper: UIStepper! {
+        didSet {
+            compressionRatioStepper.value = 1.0
+        }
+    }
+    
+    @IBOutlet weak var compressRatioLabel: UILabel!
     @IBOutlet weak var cameraPhotoView: UIImageView!
     
     @IBAction func reset(sender: AnyObject) {
         BLEManager.defaultManager.commandCenter?.resetCamera()
     }
 
+    @IBAction func changeCompressRatio(sender: UIStepper) {
+        var ratio: compressRatio!
+        switch sender.value {
+        case 0: compressRatioLabel.text = "0%"
+            ratio = compressRatio.zero
+        case 1:
+            compressRatioLabel.text = "25%"
+            ratio = compressRatio._25_percent
+        case 2:
+            compressRatioLabel.text = "36%"
+            ratio = compressRatio._36_percent
+        case 3:
+            compressRatioLabel.text = "50%"
+            ratio = compressRatio._50_percent
+        case 4:
+            compressRatioLabel.text = "75%"
+            ratio = compressRatio._75_percent
+        default: break
+        }
+        BLEManager.defaultManager.commandCenter?.setCompressionRation(ratio)
+    }
+    
     @IBAction func takePicture(sender: AnyObject) {
         BLEManager.defaultManager.commandCenter?.requestForImage()
     }
