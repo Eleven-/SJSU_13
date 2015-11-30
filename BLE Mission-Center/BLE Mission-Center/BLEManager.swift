@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, CubeSatCommandCenterCameraDelegate {
+class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     static var defaultManager = BLEManager()
     private var centralManager: CBCentralManager!
     private var readCharacteristic: CBCharacteristic?
@@ -76,11 +76,6 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, Cube
         }
     }
     
-    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
-        BLELog("JPEG received: %@", JPEGData.description)
-        self.delegate?.didRecivedWholeJPEGCamera(parser, JPEGData: JPEGData)
-    }
-    
     func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         BLELog("Notification State of characteristic[UUID: %@] is updated", characteristic.UUID.UUIDString)
         if let err = error {
@@ -88,7 +83,7 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, Cube
         }
         if readCharacteristic != nil && writeCharacteristic != nil {
             commandCenter = CubeSatCommandCenter(readCharacteristic: readCharacteristic!, writeCharacteristic: writeCharacteristic!)
-            commandCenter?.cameraDelegate = self
+//            commandCenter?.cameraDelegate = self
         }
     }
     
@@ -125,6 +120,6 @@ private func BLELog(format: String, _ args: CVarArgType...) {
 }
 
 protocol BLECenterDelegate {
-    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
+//    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
 }
 

@@ -125,10 +125,10 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
         
         NSLog("didGetAttitude %x", att)
         
-        var degrees = String(att)
+        
         //degrees += "°"
         
-        self.GetDegreesLabel.text = degrees
+        self.GetDegreesLabel.text = "\(att)"
         
     }
    

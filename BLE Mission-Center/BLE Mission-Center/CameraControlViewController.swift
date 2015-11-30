@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CameraControlViewController: UIViewController, BLECenterDelegate {
+class CameraControlViewController: UIViewController, BLECenterDelegate, CubeSatCommandCenterCameraDelegate {
 
     @IBOutlet weak var compressionRatioStepper: UIStepper! {
         didSet {
@@ -18,6 +18,11 @@ class CameraControlViewController: UIViewController, BLECenterDelegate {
     
     @IBOutlet weak var compressRatioLabel: UILabel!
     @IBOutlet weak var cameraPhotoView: UIImageView!
+    
+    @IBOutlet weak var LPCStatus: UILabel!
+    
+    @IBOutlet weak var currentProcess: UILabel!
+    
     
     @IBAction func reset(sender: AnyObject) {
         BLEManager.defaultManager.commandCenter?.resetCamera()
@@ -42,7 +47,7 @@ class CameraControlViewController: UIViewController, BLECenterDelegate {
             ratio = compressRatio._75_percent
         default: break
         }
-        BLEManager.defaultManager.commandCenter?.setCompressionRation(ratio)
+        BLEManager.defaultManager.commandCenter?.setCompressionRatio(ratio)
     }
     
     @IBAction func enterPowerSaving(sender: UISwitch) {
@@ -73,6 +78,7 @@ class CameraControlViewController: UIViewController, BLECenterDelegate {
         super.viewDidLoad()
         BLEManager.defaultManager.initalizeManager()
         BLEManager.defaultManager.delegate = self
+        BLEManager.defaultManager.commandCenter?.cameraDelegate = self
     }
     
     func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
@@ -80,8 +86,20 @@ class CameraControlViewController: UIViewController, BLECenterDelegate {
         print("JPEGDATA: \(JPEGData)")
         cameraPhotoView.image = img
     }
-
     
+    func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String) {
+        LPCStatus.text = Status
+    }
+    
+    func currentProcessDidUpdate(center: CubeSatCommandCenter, process: String) {
+        currentProcess.text = process
+    }
+//    
+//    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
+//        BLELog("JPEG received: %@", JPEGData.description)
+//        self.delegate?.didRecivedWholeJPEGCamera(parser, JPEGData: JPEGData)
+//    }
+//    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

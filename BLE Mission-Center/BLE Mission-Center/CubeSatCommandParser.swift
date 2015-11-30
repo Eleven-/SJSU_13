@@ -26,6 +26,7 @@ class CubeSatCommandCenter {
     private var LPCIsBusy: Bool = false {
         didSet {
             NSLog("LPC status : %@", LPCIsBusy ? "Busy" : "IDLE")
+            self.cameraDelegate?.LPCStatusDidUpdate(self, Status: LPCIsBusy ? "Busy" : "IDLE")
         }
     }
     
@@ -48,6 +49,7 @@ class CubeSatCommandCenter {
             lastSendedCommand = UInt8(ReadCurrentJPEGFileContent)
             CmdLog("requesting for img")
             LPCIsBusy = true
+            self.cameraDelegate?.currentProcessDidUpdate(self, process: "requesting image data")
         }
     }
     
@@ -57,19 +59,22 @@ class CubeSatCommandCenter {
             lastSendedCommand = UInt8(RESET)
             CmdLog("reseting camera")
             LPCIsBusy = true
+            self.cameraDelegate?.currentProcessDidUpdate(self, process: "Resetting Camera")
         }
     }
     
-    func setCompressionRation(ratio: compressRatio) {
+    func setCompressionRatio(ratio: compressRatio) {
         lastSendedCommand = ratio.rawValue
         writeCommand([ratio.rawValue])
         LPCIsBusy = true
+        self.cameraDelegate?.currentProcessDidUpdate(self, process: "Setting compression ratio")
     }
     
     func setResolution(resolution: Resolution) {
         lastSendedCommand = resolution.rawValue
         writeCommand([resolution.rawValue])
         LPCIsBusy = true
+        self.cameraDelegate?.currentProcessDidUpdate(self, process: "Setting resolution")
     }
     
     func enterPowerSaving(enterPowerSaving: Bool) {
@@ -77,6 +82,7 @@ class CubeSatCommandCenter {
         lastSendedCommand = command
         writeCommand([command])
         LPCIsBusy = true
+        self.cameraDelegate?.currentProcessDidUpdate(self, process: "Entering Power Saving mode")
     }
 
     func parseData(data: NSData?) {
@@ -109,7 +115,7 @@ class CubeSatCommandCenter {
                 self.attitudeDelegate?.didGetAttitude(self, attitude: attitudeValue)
             case AttitudeViewController.CmdSetAttitude:
                 writeCommand([commandByte])
-            default: break
+            default: self.cameraDelegate?.currentProcessDidUpdate(self, process: "Done")
             }
         }
         
@@ -171,6 +177,8 @@ enum Resolution: UInt8 {
 
 protocol CubeSatCommandCenterCameraDelegate {
     func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
+    func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String)
+    func currentProcessDidUpdate(center: CubeSatCommandCenter, process: String)
 }
 
 
