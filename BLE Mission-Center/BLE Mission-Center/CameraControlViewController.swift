@@ -89,17 +89,14 @@ class CameraControlViewController: UIViewController, BLECenterDelegate, CubeSatC
     
     func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String) {
         LPCStatus.text = Status
+        print(Status)
     }
     
     func currentProcessDidUpdate(center: CubeSatCommandCenter, process: String) {
         currentProcess.text = process
+        print(process)
     }
-//    
-//    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
-//        BLELog("JPEG received: %@", JPEGData.description)
-//        self.delegate?.didRecivedWholeJPEGCamera(parser, JPEGData: JPEGData)
-//    }
-//    
+ 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

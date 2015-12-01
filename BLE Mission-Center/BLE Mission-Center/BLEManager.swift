@@ -10,6 +10,7 @@ import Foundation
 import CoreBluetooth
 
 class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    
     static var defaultManager = BLEManager()
     private var centralManager: CBCentralManager!
     private var readCharacteristic: CBCharacteristic?

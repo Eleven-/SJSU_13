@@ -11,8 +11,10 @@ import CoreBluetooth
 
 class CubeSatCommandCenter {
     var temp: NSMutableData = NSMutableData()
+    
     var cameraDelegate: CubeSatCommandCenterCameraDelegate?
     var attitudeDelegate: CubeSatCommandCenterAttitudeDelegate?
+    
     private var isGettingImg: Bool = false
     private var readCharacteristic: CBCharacteristic
     private var writeCharacteristic: CBCharacteristic
@@ -34,6 +36,7 @@ class CubeSatCommandCenter {
     
     private let readJPEGCommand: NSData     = [UInt8(ReadCurrentJPEGFileContent)].dataValue()
     private let resetCameraCommand: NSData  = [UInt8(RESET)].dataValue()
+    private let takePictureCameraCommand: NSData = [UInt8(TakePicture)].dataValue()
     
     
     init(readCharacteristic: CBCharacteristic, writeCharacteristic: CBCharacteristic) {
@@ -43,6 +46,14 @@ class CubeSatCommandCenter {
     }
     
     func requestForImage() {
+        if !LPCIsBusy {
+            writeToCubeSat(takePictureCameraCommand)
+            lastSendedCommand = UInt8(TakePicture)
+            LPCIsBusy = true
+        }
+    }
+    
+    func requestForImageData() {
         self.isGettingImg = true
         if !LPCIsBusy {
             writeCharacteristic.service.peripheral.writeValue(readJPEGCommand, forCharacteristic: writeCharacteristic, type: .WithResponse)
@@ -103,6 +114,7 @@ class CubeSatCommandCenter {
             }
             switch commandByte {
             case UInt8(RESET): break
+            case UInt8(TakePicture): requestForImageData()
                 // If cmd = CmdGetAttitude
             case AttitudeViewController.CmdGetAttitude:
                 
@@ -144,7 +156,7 @@ class CubeSatCommandCenter {
             lastSendedCommand = 0xd0
         } else {
             LPCIsBusy = false
-            requestForImage()
+            requestForImageData()
         }
     }
     
