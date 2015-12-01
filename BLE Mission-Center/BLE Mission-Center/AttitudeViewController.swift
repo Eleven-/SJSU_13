@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatCommandCenterAttitudeDelegate {
+class AttitudeViewController: UIViewController, UITextFieldDelegate, BLECenterAttitudeDelegate {
     
     static let CmdGetAttitude: UInt8  = 0x41        //decimal 65
     static let CmdSetAttitude: UInt8  = 0x42        //decimal 66
@@ -29,7 +29,8 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        BLEManager.defaultManager.commandCenter?.attitudeDelegate = self
+        BLEManager.defaultManager.attDelegate = self
+//        BLEManager.defaultManager.commandCenter?.attitudeDelegate = self
         // Do any additional setup after loading the view
     
         
@@ -57,9 +58,8 @@ class AttitudeViewController: UIViewController, UITextFieldDelegate, CubeSatComm
         SunPointerButton.layer.cornerRadius = 5;
         SunPointerButton.layer.borderWidth = 1;
         SunPointerButton.layer.borderColor = UIColor.blueColor().CGColor
-
-    
     }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

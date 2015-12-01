@@ -9,19 +9,49 @@
 import Foundation
 import CoreBluetooth
 
-class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, CubeSatCommandCenterAttitudeDelegate, CubeSatCommandCenterCameraDelegate {
     
     static var defaultManager = BLEManager()
     private var centralManager: CBCentralManager!
     private var readCharacteristic: CBCharacteristic?
     private var writeCharacteristic: CBCharacteristic?
     private var peripheral: CBPeripheral?
-    var delegate: BLECenterDelegate?
+    var cameraDelegate: BLECenterCameraDelegate?
+    var attDelegate: BLECenterAttitudeDelegate?
     
     var commandCenter: CubeSatCommandCenter?
     
+    
+    func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16) {
+        self.attDelegate?.didGetAttitude(commandCenter, attitude: att)
+    }
+    
+    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
+        self.cameraDelegate?.didRecivedWholeJPEGCamera(parser, JPEGData: JPEGData)
+    }
+    
+    func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String) {
+        self.cameraDelegate?.LPCStatusDidUpdate(center, Status: Status)
+    }
+    
+    func currentProcessDidUpdate(center: CubeSatCommandCenter, process: String) {
+        self.cameraDelegate?.currentProcessDidUpdate(center, process: process)
+    }
+    
+    
     func initalizeManager() {
         centralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue(), options: nil)
+    }
+    
+    func resetBLE() {
+        if self.peripheral != nil {
+            self.centralManager.cancelPeripheralConnection(self.peripheral!)
+            self.peripheral = nil
+        }
+        self.readCharacteristic = nil
+        self.writeCharacteristic = nil
+        self.commandCenter = nil
+        centralManager.scanForPeripheralsWithServices(nil, options: nil)
     }
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
@@ -64,11 +94,11 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             for characteristic in characteristics {
                 BLELog("Found characteristics with [UUID: %@]", characteristic.UUID.UUIDString)
                 if characteristic.UUID.UUIDString == WriteCharacteristicUUID {
-                    BLELog("Fond write characteristic[UUID: %@]", characteristic.UUID.UUIDString)
+                    BLELog("Found write characteristic[UUID: %@]", characteristic.UUID.UUIDString)
                     self.writeCharacteristic = characteristic
                 }
                 if characteristic.UUID.UUIDString == ReadCharacteristicUUID {
-                    BLELog("Fond read characteristic[UUID: %@]", characteristic.UUID.UUIDString)
+                    BLELog("Found read characteristic[UUID: %@]", characteristic.UUID.UUIDString)
                     self.readCharacteristic = characteristic
                     peripheral.setNotifyValue(true, forCharacteristic: readCharacteristic!)
                     BLELog("Subscribing to characteristic[UUID: %@]", characteristic.UUID.UUIDString)
@@ -84,7 +114,9 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         }
         if readCharacteristic != nil && writeCharacteristic != nil {
             commandCenter = CubeSatCommandCenter(readCharacteristic: readCharacteristic!, writeCharacteristic: writeCharacteristic!)
-//            commandCenter?.cameraDelegate = self
+            commandCenter?.cameraDelegate = self
+            commandCenter?.attitudeDelegate = self
+            cameraDelegate?.BLEDidUpdateStatus(self, didChangeStatus: "Ready")
         }
     }
     
@@ -116,11 +148,19 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     }
 }
 
+protocol BLECenterCameraDelegate {
+    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
+    func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String)
+    func currentProcessDidUpdate(center: CubeSatCommandCenter, process: String)
+    func BLEDidUpdateStatus(manager: BLEManager, didChangeStatus status: String)
+//    func didFinishedSettUp()
+}
+
+
+protocol BLECenterAttitudeDelegate {
+    func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16)
+}
+
 private func BLELog(format: String, _ args: CVarArgType...) {
     NSLogv("BLEManager: \(format)", getVaList(args))
 }
-
-protocol BLECenterDelegate {
-//    func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData)
-}
-

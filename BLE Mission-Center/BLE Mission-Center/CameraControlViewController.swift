@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CameraControlViewController: UIViewController, BLECenterDelegate, CubeSatCommandCenterCameraDelegate {
+class CameraControlViewController: UIViewController, BLECenterCameraDelegate {
 
     @IBOutlet weak var compressionRatioStepper: UIStepper! {
         didSet {
@@ -23,6 +23,11 @@ class CameraControlViewController: UIViewController, BLECenterDelegate, CubeSatC
     
     @IBOutlet weak var currentProcess: UILabel!
     
+    @IBOutlet weak var bytesView: UITextView! {
+        didSet {
+            bytesView.font = UIFont(name: "Menlo", size: 12)
+        }
+    }
     
     @IBAction func reset(sender: AnyObject) {
         BLEManager.defaultManager.commandCenter?.resetCamera()
@@ -68,6 +73,11 @@ class CameraControlViewController: UIViewController, BLECenterDelegate, CubeSatC
         BLEManager.defaultManager.commandCenter?.setResolution(resolusion)
     }
     
+    @IBAction func killSwitchDidTap(sender: AnyObject) {
+        BLEManager.defaultManager.resetBLE()
+        self.title = "Resetting"
+        self.bytesView.hidden = true
+    }
     
     
     @IBAction func takePicture(sender: AnyObject) {
@@ -77,15 +87,30 @@ class CameraControlViewController: UIViewController, BLECenterDelegate, CubeSatC
     override func viewDidLoad() {
         super.viewDidLoad()
         BLEManager.defaultManager.initalizeManager()
-        BLEManager.defaultManager.delegate = self
-        BLEManager.defaultManager.commandCenter?.cameraDelegate = self
+        BLEManager.defaultManager.cameraDelegate = self
+        self.title = "Not Connected"
+    }
+    
+    func BLEDidUpdateStatus(manager: BLEManager, didChangeStatus status: String) {
+        self.title = status
+        if status == "Ready" {
+            self.LPCStatus.text = "IDLE"
+            self.currentProcess.text = "IDLE"
+        }
     }
     
     func didRecivedWholeJPEGCamera(parser: CubeSatCommandCenter, JPEGData: NSData) {
         let img = UIImage(data: JPEGData)
         print("JPEGDATA: \(JPEGData)")
         cameraPhotoView.image = img
+        if img == nil {
+            bytesView.text = JPEGData.description
+            bytesView.hidden = false
+        } else {
+            bytesView.hidden = true
+        }
     }
+    
     
     func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String) {
         LPCStatus.text = Status

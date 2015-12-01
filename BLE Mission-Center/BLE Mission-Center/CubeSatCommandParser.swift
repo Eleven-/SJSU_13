@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-class CubeSatCommandCenter {
+class CubeSatCommandCenter: AnyObject {
     var temp: NSMutableData = NSMutableData()
     
     var cameraDelegate: CubeSatCommandCenterCameraDelegate?
@@ -47,6 +47,7 @@ class CubeSatCommandCenter {
     
     func requestForImage() {
         if !LPCIsBusy {
+            self.cameraDelegate?.currentProcessDidUpdate(self, process: "Getting Image...")
             writeToCubeSat(takePictureCameraCommand)
             lastSendedCommand = UInt8(TakePicture)
             LPCIsBusy = true
@@ -60,7 +61,7 @@ class CubeSatCommandCenter {
             lastSendedCommand = UInt8(ReadCurrentJPEGFileContent)
             CmdLog("requesting for img")
             LPCIsBusy = true
-            self.cameraDelegate?.currentProcessDidUpdate(self, process: "requesting image data")
+//            self.cameraDelegate?.currentProcessDidUpdate(self, process: "requesting image data")
         }
     }
     
@@ -112,8 +113,9 @@ class CubeSatCommandCenter {
                     LPCIsBusy = false
                 }
             }
-            switch commandByte {
-            case UInt8(RESET): break
+            
+            switch commandByte
+            {
             case UInt8(TakePicture): requestForImageData()
                 // If cmd = CmdGetAttitude
             case AttitudeViewController.CmdGetAttitude:
@@ -127,6 +129,7 @@ class CubeSatCommandCenter {
                 self.attitudeDelegate?.didGetAttitude(self, attitude: attitudeValue)
             case AttitudeViewController.CmdSetAttitude:
                 writeCommand([commandByte])
+                
             default: self.cameraDelegate?.currentProcessDidUpdate(self, process: "Done")
             }
         }
@@ -138,26 +141,28 @@ class CubeSatCommandCenter {
         temp.appendData(payload)
         CmdLog("Received Image data with length %i", payload.length)
         CmdLog("Total bytes stored in memory: %i", temp.length)
-        print(temp)
+        
+        LPCIsBusy = false
         if temp.description.stringByReplacingOccurrencesOfString(" ", withString: "").containsString("ffd9") {
             isGettingImg = false
             let bytes = temp.byte_array
             var tmp = [UInt8]()
+            print(tmp)
             for (index, byte) in bytes.enumerate() {
                 tmp.append(byte)
                 if byte == 0xff && bytes[index + 1] == 0xd9 {
                     tmp.append(bytes[index + 1])
-                    self.cameraDelegate?.didRecivedWholeJPEGCamera(self, JPEGData: tmp.dataValue())
                     CmdLog("Image recieved: data: %@", tmp.dataValue().description)
-                    break
+                    self.cameraDelegate?.didRecivedWholeJPEGCamera(self, JPEGData: tmp.dataValue())
+                    self.cameraDelegate?.currentProcessDidUpdate(self, process: "Done.")
+//                    writeToCubeSat([0xb0].dataValue())
+//                    lastSendedCommand = 0xb0
+                    self.cameraDelegate?.LPCStatusDidUpdate(self, Status: "Image Received")
+                    return
                 }
             }
-            writeToCubeSat([0xd0].dataValue())
-            lastSendedCommand = 0xd0
-        } else {
-            LPCIsBusy = false
-            requestForImageData()
         }
+        requestForImageData()
     }
     
     func writeCommand(bytes: [UInt8]) {
@@ -192,7 +197,6 @@ protocol CubeSatCommandCenterCameraDelegate {
     func LPCStatusDidUpdate(center: CubeSatCommandCenter, Status: String)
     func currentProcessDidUpdate(center: CubeSatCommandCenter, process: String)
 }
-
 
 protocol CubeSatCommandCenterAttitudeDelegate {
     func didGetAttitude(commandCenter: CubeSatCommandCenter, attitude att: UInt16)

@@ -14,7 +14,7 @@
             </objects>
             <point key="canvasLocation" x="928.5" y="-35"/>
         </scene>
-        <!--Camera-->
+        <!--Camera Control View Controller-->
         <scene sceneID="Qzy-Uz-1IY">
             <objects>
                 <viewController id="NqA-rq-7ji" customClass="CameraControlViewController" customModule="BLE_Mission_Center" customModuleProvider="target" sceneMemberID="viewController">
@@ -26,16 +26,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RhV-DK-qjP">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="240"/>
-                                <animations/>
-                            </imageView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Ywy-sn-OtH">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="2"/>
                                 <animations/>
                             </progressView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RhV-DK-qjP">
+                                <rect key="frame" x="0.0" y="64" width="320" height="229"/>
+                                <animations/>
+                            </imageView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="nZH-cX-01k">
-                                <rect key="frame" x="20" y="299" width="280" height="29"/>
+                                <rect key="frame" x="20" y="352" width="280" height="29"/>
                                 <animations/>
                                 <segments>
                                     <segment title="160x120"/>
@@ -47,28 +47,28 @@
                                 </connections>
                             </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Compression ratio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cuh-rb-Bii">
-                                <rect key="frame" x="20" y="339" width="127" height="21"/>
+                                <rect key="frame" x="20" y="392" width="127" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="a2y-hs-cPc">
-                                <rect key="frame" x="251" y="372" width="51" height="31"/>
+                                <rect key="frame" x="251" y="425" width="51" height="31"/>
                                 <animations/>
                                 <connections>
                                     <action selector="enterPowerSaving:" destination="NqA-rq-7ji" eventType="valueChanged" id="xRb-Ee-Mzl"/>
                                 </connections>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Power Saving" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3pz-KD-gyk">
-                                <rect key="frame" x="20" y="377" width="127" height="21"/>
+                                <rect key="frame" x="20" y="430" width="127" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="45e-6G-wOf">
-                                <rect key="frame" x="110" y="411" width="100" height="100"/>
+                                <rect key="frame" x="110" y="464" width="100" height="47"/>
                                 <animations/>
                                 <state key="normal" title="Take Picture"/>
                                 <connections>
@@ -76,21 +76,21 @@
                                 </connections>
                             </button>
                             <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="4" translatesAutoresizingMaskIntoConstraints="NO" id="zIu-l0-DBC">
-                                <rect key="frame" x="206" y="335" width="94" height="29"/>
+                                <rect key="frame" x="206" y="388" width="94" height="29"/>
                                 <animations/>
                                 <connections>
                                     <action selector="changeCompressRatio:" destination="NqA-rq-7ji" eventType="valueChanged" id="uvX-LV-n6k"/>
                                 </connections>
                             </stepper>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5P1-fH-8o5">
-                                <rect key="frame" x="165" y="339" width="33" height="21"/>
+                                <rect key="frame" x="165" y="392" width="33" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="txn-KG-oyu">
-                                <rect key="frame" x="193" y="248" width="107" height="30"/>
+                                <rect key="frame" x="193" y="301" width="107" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Reset"/>
                                 <connections>
@@ -98,34 +98,49 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="LPC:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DoI-Ux-EK1">
-                                <rect key="frame" x="25" y="248" width="37" height="21"/>
+                                <rect key="frame" x="25" y="301" width="37" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="IDLE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Az-MR-V3f">
-                                <rect key="frame" x="70" y="248" width="36" height="21"/>
+                                <rect key="frame" x="70" y="301" width="36" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="IDLE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TfO-Ta-0Lt">
-                                <rect key="frame" x="25" y="270" width="108" height="21"/>
+                                <rect key="frame" x="25" y="323" width="108" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="kSu-bl-zba">
+                                <rect key="frame" x="0.0" y="64" width="320" height="229"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Camera" id="C95-wX-iWM"/>
+                    <navigationItem key="navigationItem" id="Juv-Nj-kgg">
+                        <barButtonItem key="rightBarButtonItem" title="KILL" id="IQK-CH-5te">
+                            <color key="tintColor" red="1" green="0.0" blue="0.0093617555430000002" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="killSwitchDidTap:" destination="NqA-rq-7ji" id="HNk-DS-g70"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="LPCStatus" destination="2Az-MR-V3f" id="xAj-5h-D0b"/>
+                        <outlet property="bytesView" destination="kSu-bl-zba" id="yr7-2z-IQB"/>
                         <outlet property="cameraPhotoView" destination="RhV-DK-qjP" id="JAP-wf-LPF"/>
                         <outlet property="compressRatioLabel" destination="5P1-fH-8o5" id="bAF-sv-eUw"/>
                         <outlet property="compressionRatioStepper" destination="zIu-l0-DBC" id="6cH-N8-OCl"/>
@@ -134,7 +149,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UZO-vo-rIc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1010" y="497"/>
+            <point key="canvasLocation" x="1822" y="497"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="sbA-i6-963">
@@ -147,13 +162,33 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="NqA-rq-7ji" kind="relationship" relationship="viewControllers" id="TIT-8I-b24"/>
+                        <segue destination="UBL-2J-chY" kind="relationship" relationship="viewControllers" id="TIT-8I-b24"/>
                         <segue destination="032-Wz-jzI" kind="relationship" relationship="viewControllers" id="Ins-uR-cel"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wgA-G2-0t2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="190" y="167"/>
+        </scene>
+        <!--Camera-->
+        <scene sceneID="C6e-sg-N5z">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="UBL-2J-chY" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Camera" id="C95-wX-iWM"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="t72-ZK-1dE">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="NqA-rq-7ji" kind="relationship" relationship="rootViewController" id="M52-Ux-IIG"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1lX-l6-D42" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1010" y="497"/>
         </scene>
     </scenes>
 </document>
